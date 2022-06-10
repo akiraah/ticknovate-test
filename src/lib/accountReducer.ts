@@ -15,6 +15,7 @@ enum AccountTypes {
 export const accountReducer = (events: BankAccountEvent[]): IBankAccount =>
   events.reduce((acc, val) => {
     const { type } = val
+    // initialize the default values
     acc['status'] = 'open'
     acc['accountId'] = val.accountId
     if (type === AccountTypes.AccountOpened) {
@@ -23,6 +24,7 @@ export const accountReducer = (events: BankAccountEvent[]): IBankAccount =>
       acc['transactions'] = []
       acc['balance'] = 0
     }
+    // initiate the lisf of transactions
     if (type === AccountTypes.MoneyDebited) {
       const transaction = {
         type: 'debit' as const,
@@ -41,6 +43,7 @@ export const accountReducer = (events: BankAccountEvent[]): IBankAccount =>
       acc['balance'] += val.value
       acc['transactions'].push(transaction)
     }
+    // if the account owner's name has been updated
     if (type === AccountTypes.AccountUpdated) {
       acc['ownerName'] = val.ownerName
     }
