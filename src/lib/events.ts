@@ -1,7 +1,7 @@
 import fs from 'fs/promises'
 import path from 'path'
-import { AppError } from './errorHandling'
 import type { BankAccountEvent } from '../types'
+import { AppError } from './errorHandling'
 
 /**
  * Load events for the given `accountId`.

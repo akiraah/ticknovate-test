@@ -1,8 +1,8 @@
 import express from 'express'
+import { accountReducer } from './lib/accountReducer'
 import { expressErrorHandler } from './lib/errorHandling'
 import { loadEvents, updateEvent } from './lib/events'
-import { BankAccountEvent, IBankAccount } from './types'
-import { accountReducer } from './lib/accountReducer'
+import { IBankAccount } from './types'
 
 export const app = express()
 
