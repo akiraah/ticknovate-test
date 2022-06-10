@@ -7,6 +7,11 @@ enum AccountTypes {
   AccountUpdated = 'AccountUpdated',
 }
 
+/**
+ * Creates a bank account with the list of events.
+ * @param events
+ * @returns a bank account
+ */
 export const accountReducer = (events: BankAccountEvent[]): IBankAccount =>
   events.reduce((acc, val) => {
     const { type } = val

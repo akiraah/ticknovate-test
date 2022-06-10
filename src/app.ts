@@ -1,8 +1,8 @@
 import express from 'express'
 import { accountReducer } from './lib/accountReducer'
 import { expressErrorHandler } from './lib/errorHandling'
-import { loadEvents, updateEvent } from './lib/events'
-import { IBankAccount } from './types'
+import { loadEvents, saveEvents } from './lib/events'
+import { BankAccountEvent, IBankAccount } from './types'
 
 export const app = express()
 
@@ -41,13 +41,23 @@ app.get('/accounts/:id', async (req, res, next) => {
   }
 })
 
+/**
+ * Updates an account for the given `accountId` with a new owner name.
+ */
 app.patch('/accounts/:id', async (req, res, next) => {
   try {
     const accountId = req.params.id
     const { ownerName } = req.body
     const events = await loadEvents(accountId)
     const position = events[events.length - 1].position + 1
-    await updateEvent(events, accountId, ownerName, position)
+    const accountUpdatedEvent: BankAccountEvent = {
+      accountId,
+      type: 'AccountUpdated',
+      ownerName: ownerName,
+      time: new Date().toISOString(),
+      position,
+    }
+    await saveEvents([accountUpdatedEvent])
     res.send({
       status: 200,
       message: `Account updated successfully for ${req.params.id}`,

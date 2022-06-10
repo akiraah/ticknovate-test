@@ -55,27 +55,3 @@ export async function saveEvents(events: BankAccountEvent[]) {
     })
   )
 }
-
-export const updateEvent = async (
-  events: BankAccountEvent[],
-  accountId: string,
-  ownerName: string,
-  position: number
-) => {
-  const filePath = path.join(
-    process.cwd(),
-    `/events/${accountId}/${position}.json`
-  )
-  const accountUpdatedEvent: BankAccountEvent = {
-    accountId,
-    type: 'AccountUpdated',
-    ownerName: ownerName,
-    time: new Date().toISOString(),
-    position,
-  }
-  events.push(accountUpdatedEvent)
-  await fs.writeFile(filePath, JSON.stringify(accountUpdatedEvent, null, 2), {
-    // Fail if the file already exists
-    flag: 'wx',
-  })
-}
