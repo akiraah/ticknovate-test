@@ -4,6 +4,7 @@ enum AccountTypes {
   AccountOpened = 'AccountOpened',
   MoneyDebited = 'MoneyDebited',
   MoneyCredited = 'MoneyCredited',
+  AccountUpdated = 'AccountUpdated',
 }
 
 export const accountReducer = (events: BankAccountEvent[]): IBankAccount =>
@@ -34,6 +35,9 @@ export const accountReducer = (events: BankAccountEvent[]): IBankAccount =>
       }
       acc['balance'] += val.value
       acc['transactions'].push(transaction)
+    }
+    if (type === AccountTypes.AccountUpdated) {
+      acc['ownerName'] = val.ownerName
     }
     acc['isOverdrawn'] = acc['balance'] < 0
     return acc

@@ -18,6 +18,7 @@ export async function loadEvents(
   accountId: string
 ): Promise<BankAccountEvent[]> {
   const filePath = path.join(process.cwd(), `/events/${accountId}`)
+  console.log(filePath)
   try {
     const files: string[] = await fs.readdir(filePath)
     const future: Promise<BankAccountEvent>[] = files.map(async (file) => {
@@ -52,4 +53,21 @@ export async function saveEvents(events: BankAccountEvent[]) {
       })
     })
   )
+}
+
+export const updateEvent = async (
+  events: BankAccountEvent[],
+  accountId: string,
+  ownerName: string
+) => {
+  const position = events[events.length - 1].position + 1
+  const accountUpdatedEvent: BankAccountEvent = {
+    accountId,
+    type: 'AccountUpdated',
+    ownerName: ownerName,
+    time: new Date().toISOString(),
+    position,
+  }
+  events.push(accountUpdatedEvent)
+  await saveEvents(events)
 }

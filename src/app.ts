@@ -1,7 +1,7 @@
 import express from 'express'
 import { expressErrorHandler } from './lib/errorHandling'
-import { loadEvents } from './lib/events'
-import { IBankAccount } from './types'
+import { loadEvents, updateEvents } from './lib/events'
+import { BankAccountEvent, IBankAccount } from './types'
 import { accountReducer } from './lib/accountReducer'
 
 export const app = express()
@@ -41,5 +41,18 @@ app.get('/accounts/:id', async (req, res, next) => {
   }
 })
 
-app.patch('/accounts/:id', async (req, res, next) => {})
+app.patch('/accounts/:id', async (req, res, next) => {
+  try {
+    const accountId = req.params.id
+    const { ownerName } = req.body
+    const events = await loadEvents(accountId)
+    await updateEvents(events, accountId, ownerName)
+    res.send({
+      status: 200,
+      message: `Account updated successfully for ${req.params.id}`,
+    })
+  } catch (err) {
+    next(err)
+  }
+})
 app.use(expressErrorHandler)

@@ -70,9 +70,15 @@ export type BankAccountEventBase =
   | IAccountOpenedEventBase
   | IMoneyDebitedEventBase
   | IMoneyCreditedEventBase
+  | IAccountUpdatedEventBase
 
 interface IAccountOpenedEventBase {
   type: 'AccountOpened'
+  ownerName: string
+}
+
+interface IAccountUpdatedEventBase {
+  type: 'AccountUpdated'
   ownerName: string
 }
 
