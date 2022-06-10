@@ -1,6 +1,6 @@
 import express from 'express'
 import { expressErrorHandler } from './lib/errorHandling'
-import { loadEvents, updateEvents } from './lib/events'
+import { loadEvents, updateEvent } from './lib/events'
 import { BankAccountEvent, IBankAccount } from './types'
 import { accountReducer } from './lib/accountReducer'
 
@@ -46,7 +46,8 @@ app.patch('/accounts/:id', async (req, res, next) => {
     const accountId = req.params.id
     const { ownerName } = req.body
     const events = await loadEvents(accountId)
-    await updateEvents(events, accountId, ownerName)
+    const position = events[events.length - 1].position + 1
+    await updateEvent(events, accountId, ownerName, position)
     res.send({
       status: 200,
       message: `Account updated successfully for ${req.params.id}`,

@@ -18,17 +18,18 @@ export async function loadEvents(
   accountId: string
 ): Promise<BankAccountEvent[]> {
   const filePath = path.join(process.cwd(), `/events/${accountId}`)
-  console.log(filePath)
   try {
-    const files: string[] = await fs.readdir(filePath)
-    const future: Promise<BankAccountEvent>[] = files.map(async (file) => {
-      const fileBuffer: Buffer = await fs.readFile(`${filePath}/${file}`)
-      const event: BankAccountEvent = JSON.parse(
-        Buffer.from(fileBuffer).toString()
-      )
-      return event
-    })
-    return Promise.all(future)
+    const events: string[] = await fs.readdir(filePath)
+    const futureEvents: Promise<BankAccountEvent>[] = events.map(
+      async (event) => {
+        const fileBuffer: Buffer = await fs.readFile(`${filePath}/${event}`)
+        const parsedEvent: BankAccountEvent = JSON.parse(
+          Buffer.from(fileBuffer).toString()
+        )
+        return parsedEvent
+      }
+    )
+    return Promise.all(futureEvents)
   } catch (error) {
     throw new AppError(400, `Unable to read events for ${accountId}`)
   }
@@ -58,9 +59,13 @@ export async function saveEvents(events: BankAccountEvent[]) {
 export const updateEvent = async (
   events: BankAccountEvent[],
   accountId: string,
-  ownerName: string
+  ownerName: string,
+  position: number
 ) => {
-  const position = events[events.length - 1].position + 1
+  const filePath = path.join(
+    process.cwd(),
+    `/events/${accountId}/${position}.json`
+  )
   const accountUpdatedEvent: BankAccountEvent = {
     accountId,
     type: 'AccountUpdated',
@@ -69,5 +74,8 @@ export const updateEvent = async (
     position,
   }
   events.push(accountUpdatedEvent)
-  await saveEvents(events)
+  await fs.writeFile(filePath, JSON.stringify(accountUpdatedEvent, null, 2), {
+    // Fail if the file already exists
+    flag: 'wx',
+  })
 }
